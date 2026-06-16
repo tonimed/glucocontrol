@@ -1,0 +1,30 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android local config (SDK path — específico de cada máquina)
+local.properties
+
+# Credenciales de firma — NUNCA subir al repositorio
+keystore.properties
+*.jks
+*.keystore
+
+# Herramientas de desarrollo locales
+ktlint-*.jar
+
+# IntelliJ / Android Studio
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Kotlin
+.kotlin/
+
+# macOS
+.DS_Store
+
+# Archivos de captura / logs
+*.hprof
