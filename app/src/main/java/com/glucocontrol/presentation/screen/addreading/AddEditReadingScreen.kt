@@ -1,5 +1,6 @@
 package com.glucocontrol.presentation.screen.addreading
 
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -118,7 +119,10 @@ fun AddEditReadingScreen(onBack: () -> Unit, viewModel: AddEditReadingViewModel 
                         .MutableInteractionSource()
                 }.also { src ->
                     LaunchedEffect(src) {
-                        src.interactions.collect { showDatePicker = true }
+                        // Solo PressInteraction.Press evita disparos por Focus/Hover/scroll
+                        src.interactions.collect { interaction ->
+                            if (interaction is PressInteraction.Press) showDatePicker = true
+                        }
                     }
                 },
             )
@@ -136,7 +140,10 @@ fun AddEditReadingScreen(onBack: () -> Unit, viewModel: AddEditReadingViewModel 
                         .MutableInteractionSource()
                 }.also { src ->
                     LaunchedEffect(src) {
-                        src.interactions.collect { showTimePicker = true }
+                        // Solo PressInteraction.Press evita disparos por Focus/Hover/scroll
+                        src.interactions.collect { interaction ->
+                            if (interaction is PressInteraction.Press) showTimePicker = true
+                        }
                     }
                 },
             )

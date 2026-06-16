@@ -77,6 +77,7 @@ java -jar ktlint-1.8.0.jar "app/src/**/*.kt"   # verificación
 - Canvas texto nativo: `canvas.nativeCanvas` requiere `import androidx.compose.ui.graphics.nativeCanvas` explícito.
 - Colores del canvas de la gráfica: usar `GlucoseLow/Normal/High` de `theme/Color.kt`, nunca literales hex, para garantizar contraste sobre fondo blanco.
 - WorkManager + Hilt: `GlucoControlApp` implementa `Configuration.Provider`; el `InitializationProvider` de WorkManager debe desactivarse en el Manifest (`tools:node="remove"`).
+- `MutableInteractionSource.interactions.collect` recibe todos los `Interaction` (Focus, Hover, Press…). En campos `readOnly=true` que abren un picker, filtrar siempre por `is PressInteraction.Press`; de lo contrario el picker se dispara con eventos de scroll o pérdida de foco.
 
 ## Convenciones de código
 
