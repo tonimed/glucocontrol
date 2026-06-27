@@ -6,7 +6,19 @@ Aplicación Android para el registro y seguimiento de glucosa en sangre con sinc
 
 ## Capturas de pantalla
 
-> *(pendiente de añadir screenshots de la app)*
+<div align="center">
+
+| Dashboard | Historial | Gráfica |
+| :---: | :---: | :---: |
+| <img src="docs/img/screenshots/screenshot_dashboard.jpg" width="200" alt="Dashboard"> | <img src="docs/img/screenshots/screenshot_historial.jpg" width="200" alt="Historial"> | <img src="docs/img/screenshots/screenshot_grafica_semana.jpg" width="200" alt="Gráfica semanal"> |
+| **Dashboard diario** | **Historial semanal** | **Gráfica semanal** |
+
+| Nueva lectura | Detalle de lectura | Gráfica mensual |
+| :---: | :---: | :---: |
+| <img src="docs/img/screenshots/screenshot_nueva_lectura.jpg" width="200" alt="Nueva lectura"> | <img src="docs/img/screenshots/screenshot_detalle.jpg" width="200" alt="Detalle"> | <img src="docs/img/screenshots/screenshot_grafica_mes.jpg" width="200" alt="Gráfica mensual"> |
+| **Formulario de registro** | **Detalle + donut** | **Gráfica mensual** |
+
+</div>
 
 ---
 
