@@ -3,12 +3,13 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose) // habilita el compilador de Compose en Kotlin 2.x
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.kotlin.serialization) // requerido por kotlinx-serialization en los DTOs
     alias(libs.plugins.hilt.android)
 }
 
-// Carga credenciales de firma desde keystore.properties (fuera del código fuente)
+// Carga credenciales de firma y configuración de Supabase desde keystore.properties (no versionado)
 val keystoreProps = Properties().apply {
     val propsFile = rootProject.file("keystore.properties")
     if (propsFile.exists()) propsFile.inputStream().use { load(it) }
@@ -20,20 +21,25 @@ android {
 
     defaultConfig {
         applicationId = "com.glucocontrol"
-        minSdk = 26 // java.time.* requiere API 26+
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Claves de Supabase y Google inyectadas como BuildConfig — nunca en el código fuente
+        buildConfigField("String", "SUPABASE_URL",        "\"${keystoreProps["supabaseUrl"]        ?: ""}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY",   "\"${keystoreProps["supabaseAnonKey"]   ?: ""}\"")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID","\"${keystoreProps["googleWebClientId"] ?: ""}\"")
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProps.getProperty("storeFile"))
-            storePassword = keystoreProps.getProperty("storePassword")
-            keyAlias = keystoreProps.getProperty("keyAlias")
-            keyPassword = keystoreProps.getProperty("keyPassword")
+            storeFile = file(keystoreProps.getProperty("storeFile") ?: "dummy.jks")
+            storePassword = keystoreProps.getProperty("storePassword") ?: ""
+            keyAlias = keystoreProps.getProperty("keyAlias") ?: ""
+            keyPassword = keystoreProps.getProperty("keyPassword") ?: ""
         }
     }
 
@@ -49,34 +55,26 @@ android {
     }
 
     compileOptions {
-        // Alinear con el JDK 21 del JBR de Android Studio (ver gradle.properties)
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildFeatures {
-        compose = true // activa el procesamiento de @Composable por AGP
+        compose = true
+        buildConfig = true // genera BuildConfig con los campos de Supabase y Google
     }
 
     testOptions {
-        // Habilita JUnit 5 para los unit tests locales (test/)
         unitTests.all { test ->
             test.useJUnitPlatform()
         }
     }
 }
 
-// Kotlin compiler target: equivalente al antiguo kotlinOptions.jvmTarget en Kotlin 2.3+
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
-}
-
-// Room: directorio donde KSP escribe los archivos JSON del esquema de BD.
-// Necesario porque GlucoDatabase tiene exportSchema = true.
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -90,7 +88,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
-    implementation(libs.compose.icons)        // Icons.Default.* y Extended
+    implementation(libs.compose.icons)
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
@@ -102,15 +100,31 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // ── Room ─────────────────────────────────────────────────────────────────
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler) // genera el código DAO en tiempo de compilación
+    // ── Supabase (BOM alinea postgrest, auth y compose-auth) ─────────────────
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.auth)
+    // compose-auth eliminado: ComposeAuth no está instalado en el cliente y causaba
+    // interferencia con la autenticación. Se reactivará cuando se configure Google Sign-In.
+
+    // ── Ktor (cliente HTTP requerido por el SDK de Supabase) ──────────────────
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.core)
+
+    // ── Serialización (requerida por PostgREST para los DTOs) ─────────────────
+    implementation(libs.kotlinx.serialization.json)
+
+    // ── Google Credential Manager (Google Sign-In nativo en Android) ──────────
+    implementation(libs.credentials)
+    // credentials-play-services eliminado: registraba un proveedor de credenciales
+    // a nivel de sistema que mostraba pop-ups de Google automáticamente.
+    // Se reactivará junto con el Google Web Client ID real.
+    implementation(libs.googleid)
 
     // ── WorkManager + notificaciones ────────────────────────────────────────
     implementation(libs.work.runtime.ktx)
     implementation(libs.hilt.work)
-    ksp(libs.hilt.work.compiler) // genera la factory para @HiltWorker
+    ksp(libs.hilt.work.compiler)
 
     // ── Coroutines ───────────────────────────────────────────────────────────
     implementation(libs.kotlinx.coroutines.android)
@@ -119,7 +133,7 @@ dependencies {
     testImplementation(libs.junit5.api)
     testImplementation(libs.junit5.params)
     testRuntimeOnly(libs.junit5.engine)
-    testRuntimeOnly(libs.junit5.launcher) // alinea versiones Launcher/Engine en classpath
+    testRuntimeOnly(libs.junit5.launcher)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
 
@@ -127,6 +141,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.room.testing)
     androidTestImplementation(libs.kotlinx.coroutines.test)
 }

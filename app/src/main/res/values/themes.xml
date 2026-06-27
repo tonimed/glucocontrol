@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NoActionBar elimina la barra del sistema que mostraba el app_name oscuro sobre el TopAppBar -->
+    <!-- AppCompat.DayNight.NoActionBar elimina el ActionBar del sistema sin requerir la librería View-based Material3 -->
+    <style name="Theme.GlucoControl" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>

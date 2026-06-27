@@ -107,6 +107,8 @@ constructor(
                 _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) }
             } catch (e: IllegalArgumentException) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSaving = false, error = "Error al guardar: ${e.message}") }
             }
         }
     }

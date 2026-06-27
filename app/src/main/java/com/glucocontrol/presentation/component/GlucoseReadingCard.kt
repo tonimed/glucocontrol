@@ -27,30 +27,31 @@ import com.glucocontrol.presentation.theme.GlucoseLow
 import com.glucocontrol.presentation.theme.GlucoseNormal
 import java.time.format.DateTimeFormatter
 
+/**
+ * Tarjeta de lectura reutilizada en Historial y en la vista de Detalle.
+ * [onClick] convierte la tarjeta en clickable (ripple) para navegar al detalle.
+ * [onEdit] y [onDelete] son opcionales: si son null, los botones de acción no se renderizan.
+ */
 @Composable
 fun GlucoseReadingCard(
     reading: GlucoseReading,
     glucoseRange: GlucoseRange,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
+    onClick: (() -> Unit)? = null,
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
-    val statusColor =
-        when {
-            reading.valueMgDl < glucoseRange.minTarget -> GlucoseLow
-            reading.valueMgDl > glucoseRange.maxTarget -> GlucoseHigh
-            else -> GlucoseNormal
-        }
+    val statusColor = when {
+        reading.valueMgDl < glucoseRange.minTarget -> GlucoseLow
+        reading.valueMgDl > glucoseRange.maxTarget -> GlucoseHigh
+        else -> GlucoseNormal
+    }
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    ) {
+    val cardContent: @Composable () -> Unit = {
         Row(
             modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Valor principal con color de estado
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
@@ -89,17 +90,34 @@ fun GlucoseReadingCard(
                 }
             }
 
-            // Acciones separadas del área táctil del Card
-            IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar")
+            if (onEdit != null) {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Editar")
+                }
             }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar",
-                    tint = MaterialTheme.colorScheme.error,
-                )
+            if (onDelete != null) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Eliminar",
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         }
+    }
+
+    // Usar la sobrecarga clickable de Card solo cuando se proporciona onClick
+    if (onClick != null) {
+        Card(
+            onClick = onClick,
+            modifier = modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        ) { cardContent() }
+    } else {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        ) { cardContent() }
     }
 }

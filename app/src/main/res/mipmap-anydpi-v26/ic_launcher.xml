@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Foreground apunta a @drawable/ic_app_logo, no a @mipmap/ic_launcher,
+     para evitar referencia circular en API 26+ (anydpi tiene prioridad máxima). -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@android:color/white" />
+    <foreground android:drawable="@drawable/ic_app_logo" />
+</adaptive-icon>

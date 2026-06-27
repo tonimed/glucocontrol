@@ -2,6 +2,8 @@ package com.glucocontrol.presentation.navigation
 
 /** Rutas de navegación de la app. readingId = -1 indica "nueva lectura". */
 sealed class Screen(val route: String) {
+    data object Auth : Screen("auth")
+
     data object Home : Screen("home")
 
     data object History : Screen("history")
@@ -13,5 +15,9 @@ sealed class Screen(val route: String) {
     // period es el nombre del enum ChartPeriod (WEEKLY / MONTHLY)
     data object Chart : Screen("chart/{period}") {
         fun route(period: String = "WEEKLY") = "chart/$period"
+    }
+
+    data object ReadingDetail : Screen("reading_detail/{readingId}") {
+        fun route(readingId: Long) = "reading_detail/$readingId"
     }
 }

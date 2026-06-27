@@ -1,6 +1,6 @@
-# Gluco Control
+# Control de Glucosa
 
-Aplicación Android para el registro y seguimiento de glucosa en sangre. Permite registrar lecturas con fecha, hora y etiqueta, visualizar el historial por día/semana/mes, consultar gráficas de evolución y exportar los datos en CSV o PDF.
+Aplicación Android para el registro y seguimiento de glucosa en sangre con sincronización en la nube mediante Supabase. Permite registrar lecturas con fecha, hora y etiqueta, visualizar el historial por día/semana/mes, consultar gráficas de evolución y exportar los datos en CSV o PDF.
 
 ---
 
@@ -12,13 +12,16 @@ Aplicación Android para el registro y seguimiento de glucosa en sangre. Permite
 
 ## Características
 
-- **Registro de lecturas** — valor mg/dL, fecha, hora opcional, etiqueta (Ayunas, Postprandial, Antes de dormir…) y notas libres
-- **Dashboard** — resumen del día con estado glucémico (bajo/normal/alto) y últimas lecturas
-- **Historial** — listado agrupado por día con navegación por día, semana o mes; estadísticas del periodo (media, mín/máx, % en rango)
+- **Autenticación** — registro e inicio de sesión con email/contraseña; Google Sign-In (pendiente de configurar Web Client ID)
+- **Sincronización en la nube** — datos almacenados en Supabase (PostgreSQL); accesibles desde cualquier dispositivo con la misma cuenta
+- **Registro de lecturas** — valor mg/dL, fecha, hora opcional, etiqueta (Ayunas, Pre-comida, Post-comida, Antes de dormir…) y notas libres
+- **Dashboard** — resumen del día con estado glucémico (bajo/normal/alto) y últimas lecturas; se actualiza en tiempo real al añadir registros
+- **Historial** — listado agrupado por día con navegación por día, semana o mes; la lista se actualiza inmediatamente al borrar o editar
+- **Detalle de lectura** — barra de estado coloreada (bajo/normal/alto) con cursor triangular + donut de distribución para 3 días, semana o mes del periodo seleccionado
 - **Gráfica** — evolución semanal o mensual con zonas de color por rango glucémico
 - **Exportación** — CSV (RFC 4180) y PDF (A4 con paginación automática)
 - **Recordatorios** — notificaciones periódicas mediante WorkManager configurables en la app
-- **Diseño responsive** — BottomBar en móvil, NavigationRail en tablet (≥ 600 dp)
+- **Diseño responsive** — BottomBar en móvil, NavigationRail en tablet (≥ 600 dp); orientación portrait bloqueada globalmente
 
 ---
 
@@ -26,27 +29,30 @@ Aplicación Android para el registro y seguimiento de glucosa en sangre. Permite
 
 **Clean Architecture + MVVM** con tres capas estrictas:
 
-```
+```text
 domain/        Kotlin puro. Modelos, interfaces de repositorio, casos de uso.
-data/          Room + Hilt. Entidades, DAOs, implementaciones de repositorio.
+data/          Supabase + Hilt. DTOs, cliente HTTP, implementaciones de repositorio.
 presentation/  Jetpack Compose + ViewModels. Pantallas, componentes, navegación.
 ```
 
 - `domain/` no importa nada de `data/` ni del SDK de Android.
-- El mapeo Entity ↔ Domain ocurre únicamente en `data/repository/`.
+- El mapeo DTO ↔ Domain ocurre únicamente en `data/repository/`.
 - Los ViewModels solo invocan casos de uso, nunca el repositorio directamente.
+- `GlucoseRepositoryImpl` usa un `MutableSharedFlow<Unit>(replay=1)` como `refreshTrigger`: tras cualquier insert/update/delete llama a `invalidate()`, lo que re-ejecuta todos los Flows activos y actualiza la UI automáticamente.
 
 ---
 
 ## Stack tecnológico
 
 | Componente | Versión |
-|---|---|
+| --- | --- |
 | Kotlin | 2.2.21 |
 | Android Gradle Plugin | 8.x |
 | Jetpack Compose BOM | 2026.05.01 |
 | Material3 | (incluido en BOM) |
-| Room | 2.8.4 |
+| Supabase BOM | 2.5.4 |
+| Ktor (cliente HTTP) | (incluido en BOM) |
+| kotlinx.serialization | (incluido en BOM) |
 | Hilt | 2.56.2 |
 | KSP | 2.2.21-2.0.5 |
 | Navigation Compose | 2.9.8 |
@@ -62,27 +68,31 @@ presentation/  Jetpack Compose + ViewModels. Pantallas, componentes, navegación
 
 ## Estructura del proyecto
 
-```
+```text
 app/src/main/java/com/glucocontrol/
 ├── MainActivity.kt
-├── GlucoControlApplication.kt        Configuration.Provider para WorkManager + Hilt
+├── GlucoControlApp.kt                Configuration.Provider para WorkManager + Hilt
 ├── data/
 │   ├── export/
 │   │   ├── CsvExporter.kt            RFC 4180, UTF-8
 │   │   └── PdfExporter.kt            A4, paginación automática
-│   ├── local/
-│   │   ├── dao/GlucoseReadingDao.kt
-│   │   ├── database/GlucoDatabase.kt
-│   │   └── entity/GlucoseReadingEntity.kt
-│   └── repository/GlucoseRepositoryImpl.kt
+│   ├── remote/
+│   │   ├── SupabaseClientProvider.kt buildSupabaseClient() — install(Auth) + install(Postgrest)
+│   │   └── dto/
+│   │       └── GlucoseReadingDto.kt  GlucoseReadingDto / CreateDto / UpdateDto
+│   └── repository/
+│       ├── AuthRepositoryImpl.kt     signIn / signUp / signOut / getCurrentUser
+│       └── GlucoseRepositoryImpl.kt  refreshTrigger + flatMapLatest; insert sin decode
 ├── di/
 │   ├── AppModule.kt
-│   ├── DatabaseModule.kt
+│   ├── SupabaseModule.kt             @Singleton SupabaseClient
 │   └── RepositoryModule.kt
 ├── domain/
-│   ├── model/                        GlucoseReading, GlucoseRange, ReadingTag
-│   ├── repository/                   GlucoseRepository (interfaz)
+│   ├── model/                        GlucoseReading, GlucoseRange, ReadingTag, GlucoseStatus, User
+│   ├── repository/                   GlucoseRepository, AuthRepository
 │   └── usecase/
+│       ├── auth/                     SignInWithEmail, SignUpWithEmail, SignInWithGoogle,
+│       │                             SignOut, GetCurrentUser
 │       ├── query/                    GetDailyReadings, GetWeekly, GetMonthly, GetByDateRange
 │       └── reading/                  AddReading, UpdateReading, DeleteReading, GetReadingById
 ├── notification/
@@ -90,16 +100,19 @@ app/src/main/java/com/glucocontrol/
 │   └── ReminderScheduler.kt          enqueueUniquePeriodicWork
 └── presentation/
     ├── component/
-    │   ├── AdaptiveNavigation.kt     AppBottomBar / AppNavigationRail
-    │   └── GlucoseReadingCard.kt
+    │   ├── AdaptiveNavigation.kt     AppBottomBar (oculta en AuthScreen) / AppNavigationRail
+    │   ├── AppTopBar.kt              Barra personalizada con imagen + texto (showImage opcional)
+    │   └── GlucoseReadingCard.kt     Modo solo lectura o con acciones (onClick/onEdit/onDelete)
     ├── navigation/
-    │   ├── NavGraph.kt               GlucoApp, AppNavHost
-    │   └── Screen.kt                 Home, History, AddEditReading, Chart
+    │   ├── NavGraph.kt               GlucoApp, AppNavHost, navigateTopLevel
+    │   └── Screen.kt                 Auth, Home, History, AddEditReading, Chart, ReadingDetail
     ├── screen/
+    │   ├── auth/                     AuthScreen (tabs login/registro) + AuthViewModel
     │   ├── addreading/               AddEditReadingScreen + ViewModel
-    │   ├── chart/                    ChartScreen + ViewModel (Canvas)
+    │   ├── chart/                    ChartScreen + ViewModel (Canvas, semana/mes)
     │   ├── history/                  HistoryScreen + ViewModel
-    │   └── home/                     HomeScreen + ViewModel (dashboard)
+    │   ├── home/                     HomeScreen + ViewModel (dashboard)
+    │   └── readingdetail/            ReadingDetailScreen + ViewModel + DetailPeriod
     └── theme/
         ├── Color.kt                  GlucoseLow / Normal / High
         ├── Theme.kt
@@ -113,6 +126,7 @@ app/src/main/java/com/glucocontrol/
 - Android Studio Hedgehog o superior
 - JDK 21 (incluido en el JBR de Android Studio)
 - Android SDK con API 36 instalado
+- Cuenta en [supabase.com](https://supabase.com) con el proyecto configurado
 
 ---
 
@@ -124,18 +138,25 @@ app/src/main/java/com/glucocontrol/
    cd GlucoControl
    ```
 
-2. Copia `local.properties.example` (si existe) o crea `local.properties` con la ruta de tu SDK:
-   ```
+2. Crea `local.properties` con la ruta de tu SDK:
+
+   ```properties
    sdk.dir=C\:\\Users\\<tu_usuario>\\AppData\\Local\\Android\\Sdk
    ```
 
-3. Para generar una build de release, crea `keystore.properties` en la raíz del proyecto (nunca se sube al repositorio):
-   ```
+3. Crea `keystore.properties` en la raíz del proyecto (nunca se sube al repositorio):
+
+   ```properties
    storeFile=ruta/al/glucocontrol-release.jks
    storePassword=...
    keyAlias=...
    keyPassword=...
+   supabaseUrl=https://<tu-proyecto>.supabase.co
+   supabaseAnonKey=<anon-key-de-supabase>
+   googleWebClientId=<web-client-id>.apps.googleusercontent.com
    ```
+
+4. En el Dashboard de Supabase, ejecuta el script `supabase-setup.sql` para crear la tabla `glucose_readings` con Row Level Security. Asegúrate de que **"Confirm email"** está desactivado en **Authentication → Providers → Email** para desarrollo.
 
 ---
 
@@ -169,22 +190,22 @@ java -jar ktlint-1.8.0.jar "app/src/**/*.kt"
 
 ## Tests
 
-Los tests unitarios cubren los 9 casos de uso de la capa `domain/`:
+Los tests unitarios cubren los 9 casos de uso de glucosa y los 5 de autenticación en la capa `domain/`:
 
 - `AddReadingUseCaseTest` — validación de rango de glucosa y fechas
 - `UpdateReadingUseCaseTest`, `DeleteReadingUseCaseTest`, `GetReadingByIdUseCaseTest`
 - `GetDailyReadingsUseCaseTest`, `GetWeeklyReadingsUseCaseTest`, `GetMonthlyReadingsUseCaseTest`
 - `GetByDateRangeUseCaseTest`, `GetReadingStatsUseCaseTest`
-
-Los tests instrumentados validan el DAO de Room con base de datos in-memory.
+- Tests de autenticación: `SignInWithEmailUseCaseTest`, `SignUpWithEmailUseCaseTest`, etc.
 
 ---
 
 ## Seguridad
 
-- Las credenciales de firma (`keystore.properties`, `*.jks`) están excluidas del repositorio vía `.gitignore`.
+- Las credenciales de firma y Supabase (`keystore.properties`, `*.jks`) están excluidas del repositorio vía `.gitignore`.
 - `android:allowBackup="false"` en el Manifest para proteger datos de salud en backups automáticos.
-- Los datos se almacenan únicamente en el dispositivo (sin sincronización a servidores externos).
+- Los datos se almacenan en Supabase con **Row Level Security (RLS)**: cada usuario solo puede leer y escribir sus propias lecturas (`auth.uid() = user_id`).
+- `credentials-play-services-auth` no se incluye en la build para evitar que el sistema muestre automáticamente pop-ups de credenciales de Google en campos de email.
 
 ---
 
