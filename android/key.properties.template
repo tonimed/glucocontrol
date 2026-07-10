@@ -1,0 +1,13 @@
+# Copia este archivo como key.properties (mismo directorio) y rellena los valores reales.
+# NUNCA commitear key.properties ni el archivo .jks al repositorio.
+#
+# Generar keystore con:
+#   keytool -genkey -v -keystore glucocontrol-release.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 \
+#     -alias glucocontrol
+# Colocar el .jks en android/ (ya está en .gitignore)
+
+storeFile=../glucocontrol-release.jks
+storePassword=TU_STORE_PASSWORD
+keyAlias=glucocontrol
+keyPassword=TU_KEY_PASSWORD
