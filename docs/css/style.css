@@ -258,6 +258,48 @@ a:hover { text-decoration: underline; }
   color: var(--color-accent);
 }
 
+/* ── Tarjetas de proyecto (landing portfolio) ─────────────── */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  margin-top: 40px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  text-align: center;
+  align-items: center;
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.project-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); text-decoration: none; }
+
+.project-card__logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.project-card__title { font-size: 1.2rem; font-weight: 800; color: var(--color-primary-dk); margin-bottom: 8px; }
+.project-card__desc { font-size: 0.92rem; color: var(--color-muted); margin-bottom: 20px; }
+
+.project-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.project-card__badges .badge { font-size: 0.72rem; padding: 4px 12px; background: var(--color-primary-lt); color: var(--color-primary-dk); }
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 600px) {
   .hero { padding: 56px 0 48px; }

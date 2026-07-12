@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de privacidad — TONIMED TECH — TempusWeek</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/png" href="img/logo.png" />
+  <style>
+    .privacy-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .privacy-content h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--color-primary-dk);
+      margin-bottom: 8px;
+    }
+    .privacy-content .updated {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      margin-bottom: 40px;
+    }
+    .privacy-content h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary-dk);
+      margin: 36px 0 12px;
+    }
+    .privacy-content p,
+    .privacy-content li {
+      font-size: 0.97rem;
+      color: var(--color-muted);
+      line-height: 1.75;
+    }
+    .privacy-content ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    .privacy-content li { margin-bottom: 4px; }
+    .back-link {
+      display: inline-block;
+      margin: 32px 0 0 24px;
+      font-size: 0.9rem;
+      color: var(--color-primary);
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ BRANDBAR ═══════════════════ -->
+  <nav class="brandbar">
+    <div class="container brandbar__inner">
+      <a href="../index.html" class="brandbar__logo">TONIMED<span>TECH</span></a>
+      <span class="brandbar__tagline">← Todos los proyectos</span>
+    </div>
+  </nav>
+
+  <a href="index.html" class="back-link">← Volver a inicio</a>
+
+  <div class="privacy-content">
+    <h1>Política de privacidad</h1>
+    <p class="updated">Última actualización: julio de 2026</p>
+
+    <p>
+      Esta política de privacidad describe cómo la aplicación <strong>TempusWeek</strong>,
+      desarrollada por <strong>TONIMED TECH</strong>, recoge, usa y protege la información
+      personal de sus usuarios.
+    </p>
+
+    <h2>1. Responsable</h2>
+    <p>
+      El responsable del tratamiento de los datos es <strong>TONIMED TECH</strong>, marca bajo
+      la que se desarrolla esta aplicación de uso personal y educativo. Para cualquier consulta
+      relacionada con privacidad, puedes escribir a
+      <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.
+    </p>
+
+    <h2>2. Datos que se recogen</h2>
+    <p>La aplicación recoge y almacena únicamente los datos que tú introduces:</p>
+    <ul>
+      <li><strong>Dirección de email</strong> — usada como identificador de cuenta.</li>
+      <li><strong>Tareas y categorías</strong> — título, descripción, fecha, horas de inicio/fin, categoría y regla de recurrencia.</li>
+    </ul>
+    <p>La aplicación <strong>no recoge</strong> datos de geolocalización, contactos, cámara ni ninguna información no relacionada con la planificación de tareas.</p>
+
+    <h2>3. Dónde se almacenan los datos</h2>
+    <p>
+      Los datos se almacenan principalmente en el propio dispositivo (base de datos local Drift/SQLite),
+      permitiendo que la app funcione sin conexión. Cuando hay red disponible, se sincronizan con un
+      backend propio (Django REST Framework + PostgreSQL) desplegado en <strong>Railway</strong>
+      (railway.app). Las comunicaciones entre la app y el backend se realizan siempre mediante HTTPS.
+    </p>
+    <p>
+      Cada usuario solo puede leer y modificar sus propias tareas y categorías; el backend filtra
+      todas las consultas por la cuenta autenticada, sin acceso cruzado entre usuarios.
+    </p>
+
+    <h2>4. Finalidad del tratamiento</h2>
+    <p>Los datos se usan exclusivamente para:</p>
+    <ul>
+      <li>Mostrar y sincronizar tu planificador semanal entre sesiones y dispositivos.</li>
+      <li>Generar recordatorios locales antes de cada tarea.</li>
+    </ul>
+    <p>Los datos <strong>no se venden, no se comparten</strong> con terceros ni se usan con fines publicitarios. La app no integra analítica ni redes publicitarias.</p>
+
+    <h2>5. Notificaciones</h2>
+    <p>
+      Los recordatorios de tareas son <strong>100% locales</strong>: se generan y programan en el propio
+      dispositivo mediante las herramientas del sistema operativo Android. La app no utiliza notificaciones
+      push remotas ni servicios de terceros para este fin.
+    </p>
+
+    <h2>6. Período de conservación</h2>
+    <p>
+      Los datos se conservan mientras la cuenta esté activa. El usuario puede eliminar
+      cualquier tarea o categoría desde la propia aplicación en cualquier momento.
+      Para eliminar completamente la cuenta y todos los datos asociados, contacta con
+      <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.
+    </p>
+
+    <h2>7. Derechos del usuario</h2>
+    <p>Puedes ejercer en cualquier momento los siguientes derechos:</p>
+    <ul>
+      <li><strong>Acceso</strong> — consultar los datos almacenados sobre ti.</li>
+      <li><strong>Rectificación</strong> — corregir datos incorrectos directamente desde la app.</li>
+      <li><strong>Supresión</strong> — eliminar tus datos y cuenta.</li>
+    </ul>
+    <p>Para ejercer estos derechos, escribe a <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.</p>
+
+    <h2>8. Seguridad</h2>
+    <p>
+      La autenticación se realiza mediante tokens JWT (Simple JWT), almacenados de forma cifrada en el
+      dispositivo con <code>flutter_secure_storage</code>. Las contraseñas nunca se almacenan en texto
+      plano; Django gestiona su cifrado en el servidor.
+    </p>
+
+    <h2>9. Cambios en esta política</h2>
+    <p>
+      Cualquier cambio relevante en esta política se comunicará mediante una actualización
+      de la app o de esta página. La fecha de última actualización figura al inicio del documento.
+    </p>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p style="font-weight:700; letter-spacing:0.5px;">TONIMED TECH</p>
+      <p>
+        <a href="index.html">Inicio</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/tonimed/TempusWeek" target="_blank" rel="noopener">GitHub</a>
+      </p>
+      <p class="footer__copy">© 2026 TONIMED TECH — TempusWeek, proyecto de código abierto</p>
+    </div>
+  </footer>
+
+</body>
+</html>
