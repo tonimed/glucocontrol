@@ -43,8 +43,10 @@ class GlucoseRepositoryImpl implements GlucoseRepository {
     }
   }
 
+  // Usa año/mes/día tal cual (sin .toUtc()) — ver nota en DriftGlucoseRepository.
   int _toEpochDay(DateTime date) =>
-      date.toUtc().millisecondsSinceEpoch ~/ 86400000;
+      DateTime.utc(date.year, date.month, date.day).millisecondsSinceEpoch ~/
+      86400000;
 
   @override
   Stream<List<GlucoseReading>> getReadingsByDate(DateTime date) {

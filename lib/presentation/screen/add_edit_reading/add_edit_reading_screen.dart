@@ -5,19 +5,60 @@ import 'package:glucocontrol/presentation/component/app_top_bar.dart';
 import 'package:glucocontrol/presentation/screen/add_edit_reading/add_edit_reading_notifier.dart';
 import 'package:intl/intl.dart';
 
-class AddEditReadingScreen extends ConsumerWidget {
+class AddEditReadingScreen extends ConsumerStatefulWidget {
   final int readingId; // -1 = nueva, >0 = edición
 
   const AddEditReadingScreen({super.key, required this.readingId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AddEditReadingScreen> createState() =>
+      _AddEditReadingScreenState();
+}
+
+class _AddEditReadingScreenState extends ConsumerState<AddEditReadingScreen> {
+  // Controladores persistentes: crear uno nuevo en cada build() (a partir de
+  // state.valueMgDl) desincroniza el texto visible del estado real del
+  // notifier — cualquier rebuild a mitad de escritura (p.ej. al fijar
+  // state.error) sustituye el controlador por uno con el valor ANTERIOR,
+  // perdiendo lo que el usuario acaba de teclear sin que onChanged lo note.
+  late final _valueController = TextEditingController(
+    text: ref.read(addEditNotifierProvider(widget.readingId)).valueMgDl,
+  );
+  late final _notesController = TextEditingController(
+    text: ref.read(addEditNotifierProvider(widget.readingId)).notes,
+  );
+
+  @override
+  void dispose() {
+    _valueController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final readingId = widget.readingId;
     final state    = ref.watch(addEditNotifierProvider(readingId));
     final notifier = ref.read(addEditNotifierProvider(readingId).notifier);
 
     // Volver automáticamente tras guardar
-    ref.listen<AddEditState>(addEditNotifierProvider(readingId), (_, next) {
+    ref.listen<AddEditState>(addEditNotifierProvider(readingId), (previous, next) {
       if (next.savedSuccessfully && context.mounted) Navigator.of(context).pop();
+
+      // Sincroniza los controladores solo cuando el valor cambia por una vía
+      // que no sea el propio TextField (p.ej. al cargar una lectura existente
+      // para editar), nunca en cada rebuild.
+      if (previous?.valueMgDl != next.valueMgDl &&
+          _valueController.text != next.valueMgDl) {
+        _valueController.text = next.valueMgDl;
+        _valueController.selection =
+            TextSelection.collapsed(offset: _valueController.text.length);
+      }
+      if (previous?.notes != next.notes && _notesController.text != next.notes) {
+        _notesController.text = next.notes;
+        _notesController.selection =
+            TextSelection.collapsed(offset: _notesController.text.length);
+      }
     });
 
     return Scaffold(
@@ -37,10 +78,7 @@ class AddEditReadingScreen extends ConsumerWidget {
                 prefixIcon: Icon(Icons.water_drop_outlined),
               ),
               keyboardType: TextInputType.number,
-              controller: TextEditingController(text: state.valueMgDl)
-                ..selection = TextSelection.collapsed(
-                  offset: state.valueMgDl.length,
-                ),
+              controller: _valueController,
               onChanged: notifier.setValue,
             ),
             const SizedBox(height: 14),
@@ -139,9 +177,7 @@ class AddEditReadingScreen extends ConsumerWidget {
                 alignLabelWithHint: true,
               ),
               maxLines: 3,
-              controller: TextEditingController(text: state.notes)
-                ..selection =
-                    TextSelection.collapsed(offset: state.notes.length),
+              controller: _notesController,
               onChanged: notifier.setNotes,
             ),
             const SizedBox(height: 20),

@@ -254,20 +254,20 @@ class HistoryScreen extends ConsumerWidget {
                                     onDelete: () async {
                                       final ok = await showDialog<bool>(
                                         context: context,
-                                        builder: (_) => AlertDialog(
+                                        builder: (dialogContext) => AlertDialog(
                                           title: const Text('Eliminar lectura'),
                                           content: const Text(
                                             '¿Eliminar esta lectura? No se puede deshacer.',
                                           ),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, false),
+                                              onPressed: () => Navigator.pop(
+                                                  dialogContext, false),
                                               child: const Text('Cancelar'),
                                             ),
                                             FilledButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, true),
+                                              onPressed: () => Navigator.pop(
+                                                  dialogContext, true),
                                               child: const Text('Eliminar'),
                                             ),
                                           ],

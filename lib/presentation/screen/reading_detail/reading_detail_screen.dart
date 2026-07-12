@@ -228,44 +228,94 @@ class _GlucoseStatusBar extends StatelessWidget {
     final pct = (clampedVal - min) / (max - min);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: SizedBox(
-            height: 12,
-            child: Row(
-              children: [
-                Expanded(
-                  flex: (minTarget - min).round(),
-                  child: ColoredBox(color: kGlucoseLow.withValues(alpha: 0.4)),
-                ),
-                Expanded(
-                  flex: maxTarget - minTarget,
-                  child: ColoredBox(color: kGlucoseNormal.withValues(alpha: 0.4)),
-                ),
-                Expanded(
-                  flex: (max - maxTarget).round(),
-                  child: ColoredBox(color: kGlucoseHigh.withValues(alpha: 0.4)),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Cursor
-        Padding(
-          padding: EdgeInsets.only(left: pct * (MediaQuery.of(context).size.width - 64)),
-          child: const Icon(Icons.arrow_drop_up, size: 18),
-        ),
-        // Etiquetas
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('$minTarget', style: const TextStyle(fontSize: 10)),
-              Text('$maxTarget', style: const TextStyle(fontSize: 10)),
-            ],
-          ),
+        // Barra segmentada por posición absoluta (Stack), no por Row+Expanded:
+        // en el emulador de pruebas (imagen Android 17 "16k page size"),
+        // Row+Expanded con un ColoredBox como único hijo no llega a pintarse
+        // (verificado con varias combinaciones); un Stack posicionado por
+        // porcentaje evita ese camino de renderizado por completo.
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final lowW = (minTarget - min) / (max - min) * width;
+            final normalW = (maxTarget - minTarget) / (max - min) * width;
+            final highW = (max - maxTarget) / (max - min) * width;
+            const cursorSize = 18.0;
+            final cursorLeft =
+                (pct * width - cursorSize / 2).clamp(0.0, width - cursorSize);
+            const labelStyle = TextStyle(fontSize: 10);
+            return SizedBox(
+              width: double.infinity,
+              height: 12 + cursorSize + 16,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: SizedBox(
+                      height: 12,
+                      width: width,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: lowW,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(color: kGlucoseLow.withValues(alpha: 0.4)),
+                            ),
+                          ),
+                          Positioned(
+                            left: lowW,
+                            top: 0,
+                            bottom: 0,
+                            width: normalW,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(color: kGlucoseNormal.withValues(alpha: 0.4)),
+                            ),
+                          ),
+                          Positioned(
+                            left: lowW + normalW,
+                            top: 0,
+                            bottom: 0,
+                            width: highW,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(color: kGlucoseHigh.withValues(alpha: 0.4)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: cursorLeft,
+                    top: 12,
+                    child: const Icon(Icons.arrow_drop_up, size: cursorSize),
+                  ),
+                  // Etiquetas — alineadas con el punto real de la barra donde
+                  // cambia de color (minTarget/maxTarget), no con los bordes
+                  // del contenedor (que representan min/max, no el rango objetivo).
+                  Positioned(
+                    left: lowW,
+                    top: 12 + cursorSize,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, 0),
+                      child: Text('$minTarget', style: labelStyle),
+                    ),
+                  ),
+                  Positioned(
+                    left: lowW + normalW,
+                    top: 12 + cursorSize,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, 0),
+                      child: Text('$maxTarget', style: labelStyle),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ],
     );

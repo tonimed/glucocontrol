@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TONIMED TECH — Control de Glucosa, app Android para registro y seguimiento de glucosa en sangre con sincronización en la nube." />
+  <title>TONIMED TECH — Control de Glucosa</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="img/logo.png" />
+</head>
+<body>
+
+  <!-- ═══════════════════ BRANDBAR ═══════════════════ -->
+  <nav class="brandbar">
+    <div class="container brandbar__inner">
+      <a href="index.html" class="brandbar__logo">TONIMED<span>TECH</span></a>
+      <span class="brandbar__tagline">Desarrollo de apps móviles</span>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <header class="hero">
+    <div class="container hero__inner">
+      <img src="img/logo.png" alt="Icono de Control de Glucosa" class="hero__logo" />
+      <p class="hero__eyebrow">Un proyecto de TONIMED TECH</p>
+      <h1 class="hero__title">Control de Glucosa</h1>
+      <p class="hero__subtitle">
+        Registra y sigue tu glucosa en sangre desde el móvil,<br />
+        con sincronización en la nube y acceso desde cualquier dispositivo.
+      </p>
+      <div class="hero__actions">
+        <a href="https://github.com/tonimed/glucocontrol/releases/latest" class="btn btn--primary" target="_blank" rel="noopener">
+          ⬇ Descargar APK
+        </a>
+        <a href="https://github.com/tonimed/glucocontrol" class="btn btn--secondary" target="_blank" rel="noopener">
+          Ver en GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ CARACTERÍSTICAS ═══════════════════ -->
+  <section class="section" id="caracteristicas">
+    <div class="container">
+      <h2 class="section__title">Características</h2>
+      <div class="features">
+
+        <div class="feature-card">
+          <span class="feature-card__icon">🔐</span>
+          <h3>Autenticación segura</h3>
+          <p>Registro e inicio de sesión con email y contraseña. Tus datos son privados y solo tú puedes verlos.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">☁️</span>
+          <h3>Sincronización en la nube</h3>
+          <p>Datos almacenados en Supabase (PostgreSQL). Accede a tu historial desde cualquier dispositivo.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">📋</span>
+          <h3>Registro de lecturas</h3>
+          <p>Guarda el valor en mg/dL, fecha, hora y etiqueta: Ayunas, Pre-comida, Post-comida, Antes de dormir…</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">📊</span>
+          <h3>Dashboard diario</h3>
+          <p>Resumen del día con estado glucémico (bajo / normal / alto) y lista de las últimas lecturas.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">📅</span>
+          <h3>Historial completo</h3>
+          <p>Navega tu historial por día, semana o mes. La lista se actualiza al instante al añadir o borrar lecturas.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">📈</span>
+          <h3>Gráficas de evolución</h3>
+          <p>Visualiza tu tendencia semanal o mensual con zonas de color por rango glucémico.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">🍩</span>
+          <h3>Detalle de lectura</h3>
+          <p>Barra de estado coloreada con cursor triangular y donut de distribución para 3 días, semana o mes.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">📤</span>
+          <h3>Exportación</h3>
+          <p>Exporta tus datos a CSV (RFC 4180) o PDF en formato A4 con paginación automática.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-card__icon">🔔</span>
+          <h3>Recordatorios</h3>
+          <p>Notificación diaria configurable para no olvidar medir tu glucosa.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ CAPTURAS ═══════════════════ -->
+  <section class="section section--alt" id="capturas">
+    <div class="container">
+      <h2 class="section__title">Capturas de pantalla</h2>
+      <p class="section__subtitle">La app en funcionamiento real</p>
+      <div class="screenshots">
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_dashboard.jpg" alt="Dashboard diario con resumen de lecturas" loading="lazy" />
+          <figcaption>Dashboard</figcaption>
+        </figure>
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_historial.jpg" alt="Historial semanal de lecturas" loading="lazy" />
+          <figcaption>Historial</figcaption>
+        </figure>
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_nueva_lectura.jpg" alt="Formulario de nueva lectura" loading="lazy" />
+          <figcaption>Nuevo registro</figcaption>
+        </figure>
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_grafica_semana.jpg" alt="Gráfica de evolución semanal" loading="lazy" />
+          <figcaption>Gráfica semanal</figcaption>
+        </figure>
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_grafica_mes.jpg" alt="Gráfica de evolución mensual" loading="lazy" />
+          <figcaption>Gráfica mensual</figcaption>
+        </figure>
+        <figure class="screenshot-item">
+          <img src="img/screenshots/screenshot_detalle.jpg" alt="Detalle de lectura con donut de distribución" loading="lazy" />
+          <figcaption>Detalle + donut</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ DESCARGA ═══════════════════ -->
+  <section class="section" id="descarga">
+    <div class="container text-center">
+      <h2 class="section__title">Descargar</h2>
+      <p class="section__subtitle">
+        Disponible para Android 8.0 o superior (API 26+).
+      </p>
+      <a href="https://github.com/tonimed/glucocontrol/releases/latest" class="btn btn--primary btn--large" target="_blank" rel="noopener">
+        ⬇ Descargar última versión (APK)
+      </a>
+      <p class="download-note">
+        Al instalar, acepta la instalación desde fuentes desconocidas en los ajustes de tu dispositivo.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ TECNOLOGÍA ═══════════════════ -->
+  <section class="section section--alt" id="tecnologia">
+    <div class="container">
+      <h2 class="section__title">Tecnología</h2>
+      <div class="badges">
+        <span class="badge">Flutter &amp; Dart</span>
+        <span class="badge">Riverpod</span>
+        <span class="badge">go_router</span>
+        <span class="badge">Material 3</span>
+        <span class="badge">Supabase</span>
+        <span class="badge">Drift (SQLite offline-first)</span>
+        <span class="badge">Clean Architecture</span>
+        <span class="badge">fl_chart</span>
+        <span class="badge">Open Source</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p style="font-weight:700; letter-spacing:0.5px;">TONIMED TECH</p>
+      <p>
+        <a href="https://github.com/tonimed/glucocontrol" target="_blank" rel="noopener">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="privacy.html">Política de privacidad</a>
+      </p>
+      <p class="footer__copy">© 2026 TONIMED TECH — Control de Glucosa, proyecto de código abierto</p>
+    </div>
+  </footer>
+
+</body>
+</html>

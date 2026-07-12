@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de privacidad — TONIMED TECH — Control de Glucosa</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="img/logo.png" />
+  <style>
+    .privacy-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .privacy-content h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--color-primary-dk);
+      margin-bottom: 8px;
+    }
+    .privacy-content .updated {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      margin-bottom: 40px;
+    }
+    .privacy-content h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary-dk);
+      margin: 36px 0 12px;
+    }
+    .privacy-content p,
+    .privacy-content li {
+      font-size: 0.97rem;
+      color: var(--color-muted);
+      line-height: 1.75;
+    }
+    .privacy-content ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    .privacy-content li { margin-bottom: 4px; }
+    .back-link {
+      display: inline-block;
+      margin: 32px 0 0 24px;
+      font-size: 0.9rem;
+      color: var(--color-primary);
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ BRANDBAR ═══════════════════ -->
+  <nav class="brandbar">
+    <div class="container brandbar__inner">
+      <a href="index.html" class="brandbar__logo">TONIMED<span>TECH</span></a>
+      <span class="brandbar__tagline">Desarrollo de apps móviles</span>
+    </div>
+  </nav>
+
+  <a href="index.html" class="back-link">← Volver a inicio</a>
+
+  <div class="privacy-content">
+    <h1>Política de privacidad</h1>
+    <p class="updated">Última actualización: julio de 2026</p>
+
+    <p>
+      Esta política de privacidad describe cómo la aplicación <strong>Control de Glucosa</strong>,
+      desarrollada por <strong>TONIMED TECH</strong>, recoge, usa y protege la información
+      personal de sus usuarios.
+    </p>
+
+    <h2>1. Responsable</h2>
+    <p>
+      El responsable del tratamiento de los datos es <strong>TONIMED TECH</strong>, marca bajo
+      la que se desarrolla esta aplicación de uso personal y educativo. Para cualquier consulta
+      relacionada con privacidad, puedes escribir a
+      <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.
+    </p>
+
+    <h2>2. Datos que se recogen</h2>
+    <p>La aplicación recoge y almacena únicamente los datos que tú introduces:</p>
+    <ul>
+      <li><strong>Dirección de email</strong> — usada como identificador de cuenta.</li>
+      <li><strong>Lecturas de glucosa</strong> — valor en mg/dL, fecha, hora y etiqueta (p.ej. "Ayunas").</li>
+      <li><strong>Notas opcionales</strong> — texto libre que el usuario añade a cada lectura.</li>
+    </ul>
+    <p>La aplicación <strong>no recoge</strong> datos de geolocalización, contactos, cámara ni ninguna información no relacionada con el seguimiento de glucosa.</p>
+
+    <h2>3. Dónde se almacenan los datos</h2>
+    <p>
+      Los datos se almacenan en <strong>Supabase</strong> (supabase.com), una plataforma de base de datos
+      PostgreSQL en la nube. Supabase cumple con el RGPD. Los servidores pueden estar ubicados en la
+      Unión Europea o en Estados Unidos (dependiendo de la región del proyecto Supabase).
+    </p>
+    <p>
+      La protección de los datos está reforzada mediante <strong>Row Level Security (RLS)</strong>:
+      cada usuario solo puede leer y modificar sus propias lecturas; no existe acceso cruzado entre cuentas.
+    </p>
+
+    <h2>4. Finalidad del tratamiento</h2>
+    <p>Los datos se usan exclusivamente para:</p>
+    <ul>
+      <li>Mostrar el historial y estadísticas de glucosa al propio usuario.</li>
+      <li>Generar exportaciones en CSV o PDF a petición del usuario.</li>
+      <li>Enviar recordatorios locales de medición (notificaciones del dispositivo).</li>
+    </ul>
+    <p>Los datos <strong>no se venden, no se comparten</strong> con terceros ni se usan con fines publicitarios.</p>
+
+    <h2>5. Período de conservación</h2>
+    <p>
+      Los datos se conservan mientras la cuenta esté activa. El usuario puede eliminar
+      cualquier lectura desde la propia aplicación en cualquier momento.
+      Para eliminar completamente la cuenta y todos los datos asociados, contacta con
+      <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.
+    </p>
+
+    <h2>6. Derechos del usuario</h2>
+    <p>Puedes ejercer en cualquier momento los siguientes derechos:</p>
+    <ul>
+      <li><strong>Acceso</strong> — consultar los datos almacenados sobre ti.</li>
+      <li><strong>Rectificación</strong> — corregir datos incorrectos directamente desde la app.</li>
+      <li><strong>Supresión</strong> — eliminar tus datos y cuenta.</li>
+      <li><strong>Portabilidad</strong> — exportar tus datos en CSV o PDF desde la app.</li>
+    </ul>
+    <p>Para ejercer estos derechos, escribe a <a href="mailto:toniketrona8@gmail.com">toniketrona8@gmail.com</a>.</p>
+
+    <h2>7. Seguridad</h2>
+    <p>
+      Las comunicaciones entre la app y Supabase se realizan siempre mediante HTTPS.
+      Las contraseñas nunca se almacenan en texto plano; son gestionadas por el sistema de
+      autenticación de Supabase (bcrypt). La app tiene desactivada la copia de seguridad
+      automática de Android (<code>android:allowBackup="false"</code>) para evitar que los datos
+      de salud se sincronicen en copias de seguridad de terceros.
+    </p>
+
+    <h2>8. Cambios en esta política</h2>
+    <p>
+      Cualquier cambio relevante en esta política se comunicará mediante una actualización
+      de la app o de esta página. La fecha de última actualización figura al inicio del documento.
+    </p>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p style="font-weight:700; letter-spacing:0.5px;">TONIMED TECH</p>
+      <p>
+        <a href="index.html">Inicio</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/tonimed/glucocontrol" target="_blank" rel="noopener">GitHub</a>
+      </p>
+      <p class="footer__copy">© 2026 TONIMED TECH — Control de Glucosa, proyecto de código abierto</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -58,8 +58,14 @@ class DriftGlucoseRepository implements GlucoseRepository {
   // Conversiones domain ↔ Drift
   // ---------------------------------------------------------------------------
 
+  // Usa los componentes año/mes/día TAL CUAL (sin .toUtc()): la fecha de una
+  // lectura es un día de calendario, no un instante. Convertir a UTC antes de
+  // dividir por día desplazaba la fecha al día anterior en zonas horarias por
+  // delante de UTC (p.ej. Madrid en verano, UTC+2): medianoche local pasa a
+  // ser las 22:00 del día previo en UTC.
   static int _toEpochDay(DateTime date) =>
-      date.toUtc().millisecondsSinceEpoch ~/ 86400000;
+      DateTime.utc(date.year, date.month, date.day).millisecondsSinceEpoch ~/
+      86400000;
 
   static DateTime _fromEpochDay(int day) =>
       DateTime.utc(1970).add(Duration(days: day));

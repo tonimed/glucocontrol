@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -18,6 +19,12 @@ class NotificationService {
     if (_initialized) return;
 
     tz.initializeTimeZones();
+    // Sin esto, tz.local se queda en UTC por defecto: un recordatorio
+    // configurado a las 8:00 se programaba a las 8:00 UTC (10:00 en Madrid
+    // en verano), no a las 8:00 hora local — el usuario no lo veía a la
+    // hora esperada.
+    final localTimeZone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(localTimeZone.identifier));
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios     = DarwinInitializationSettings();
@@ -71,7 +78,11 @@ class NotificationService {
       '¿Ya has registrado tu glucosa hoy?',
       scheduled,
       const NotificationDetails(android: androidDetails),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // inexact: un recordatorio diario no necesita precisión al minuto, y
+      // exactAllowWhileIdle requiere el permiso especial "Alarmas y
+      // recordatorios" (SCHEDULE_EXACT_ALARM) que Android 12+ no concede
+      // por defecto — con inexact evitamos ese permiso adicional.
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time, // se repite cada día

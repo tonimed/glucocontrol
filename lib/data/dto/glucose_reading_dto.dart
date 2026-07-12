@@ -70,10 +70,11 @@ class GlucoseReadingCreateDto {
     GlucoseReading r,
     String userId,
   ) {
-    final epochDay = r.date
-            .toUtc()
-            .millisecondsSinceEpoch ~/
-        86400000;
+    // Año/mes/día tal cual (sin .toUtc()) — ver nota en DriftGlucoseRepository.
+    final epochDay =
+        DateTime.utc(r.date.year, r.date.month, r.date.day)
+                .millisecondsSinceEpoch ~/
+            86400000;
     final timeSeconds = r.time != null
         ? r.time!.hour * 3600 + r.time!.minute * 60 + r.time!.second
         : null;
